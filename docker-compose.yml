@@ -1,0 +1,46 @@
+version: "3.7"
+services:
+  portainer-ce:
+    container_name: portainer
+    image: portainer/portainer-ce:latest
+    ports:
+      - '9000:9000'
+    volumes:
+      - '/home/$USER/docker/portainer/data:/data'
+      - '/var/run/docker.sock:/var/run/docker.sock'
+    restart: unless-stopped
+
+  watchtower:
+    container_name: watchtower
+    image: containrrr/watchtower
+    volumes:
+      - '/var/run/docker.sock:/var/run/docker.sock'
+      - '/root/.docker/config.json:/config.json'
+    restart: unless-stopped
+
+  scrypted:
+    container_name: scrypted
+    image: koush/scrypted
+    volumes:
+      - '~/.scrypted/volume:/server/volume'
+    restart: unless-stopped
+    network_mode: host
+    
+  eclipse-mosquitto:
+    container_name: MQTT
+    image: eclipse-mosquitto
+    restart: unless-stopped
+    network_mode: host
+    ports:
+      - '1883:1883'
+    volumes:
+      - '$HOME/docker/mosquitto:/mosquitto/'
+  zigbee2mqtt:
+    container_name: zigbee2mqtt
+    image: koenkk/zigbee2mqtt
+    network_mode: host
+    restart: unless-stopped
+    volumes:
+      - '$HOME/docker/zigbee2mqtt/data:/ap/data'
+    environment:
+      - TZ='America/Central'
